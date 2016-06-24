@@ -1,0 +1,7 @@
+s3:
+    bucket: test-bucket
+    keys:
+        - hostname/s3_123345678.tar.gz
+status: mock
+timestamp: "1234567890"
+message: "This is a mock status file"

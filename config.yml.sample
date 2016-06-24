@@ -1,0 +1,11 @@
+mysql:
+    host: localhost
+    user: sugardbadmin
+    passwd: password
+    db: sugarcrm
+backup_folders:
+    - /etc/httpd/conf.d
+    - /var/lib 
+s3:
+    bucket: s3-bucket-test
+backup_storage: /tmp/backups/
