@@ -132,9 +132,9 @@ if __name__ == "__main__":
                         config['mysql']['db'],
                         backup_name,
             ))
-            tar.add(backup_name, arcname=os.path.basename(backup_name))
+            tar.add(backup_name, arcname=os.path.basename(backup_name))    
         except NameError:
-            # Database not defined
+            print 'No database defined. Skipping'
         except:
             # Database defined, but backup failed
             alert("Database backup failed for " + config['mysql']['db'])
