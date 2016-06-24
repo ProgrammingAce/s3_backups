@@ -5,6 +5,7 @@ import sys
 import yaml
 import time
 import boto
+import json
 import boto.s3
 import tarfile
 import subprocess
@@ -73,6 +74,20 @@ def get_instanceID():
 
     return local_instance_id
 
+def get_roleID():
+    command = 'wget -q -O - http://169.254.169.254/latest/meta-data/instance-id'
+    output = subprocess.check_output(command, shell=True)
+
+    iam_info = json.loads(output.decode('utf8'))
+
+    role_id = iam_info['InstanceProfileId']
+
+    return role_id
+
+
+
+    return local_instance_id
+
 if __name__ == "__main__":
     # Default config location is in the same folder as this script
     config_path = os.path.split(sys.argv[0])[0] + '/' +'config.yml'
@@ -85,7 +100,10 @@ if __name__ == "__main__":
 
     # AWS userid is the role ID for the IAM role and the instance ID for the
     #   EC2 instance
-    aws_userid = 'AROAI2JXQXQ6BGZLFENVK:%s' % (get_instanceID())
+    aws_userid = '%s:%s' % (get_roleID(), get_instanceID())
+
+    print aws_userid
+    sys.exit()
 
     output_file = config['backup_storage'] + "/s3_" + timestamp + ".tar.gz"
 
@@ -115,7 +133,10 @@ if __name__ == "__main__":
                         backup_name,
             ))
             tar.add(backup_name, arcname=os.path.basename(backup_name))
+        except NameError:
+            # Database not defined
         except:
+            # Database defined, but backup failed
             alert("Database backup failed for " + config['mysql']['db'])
 
     print "Uploading file to S3"
